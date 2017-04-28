@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+
+if which greadlink > /dev/null 2>&1; then
+    alias readlink=greadlink
+fi
+
+currentfolder="$(pwd)"
+
+cd "$(dirname "$(dirname "$(readlink -f "$0")")../")"
+
+# we need some configuration
+if [ -e .env ]; then
+    . "$(pwd)/.env"
+elif [ -e .env-sample ]; then
+    . "$(pwd)/.env-sample"
+else
+    echo "no config found"
+    exit 1
+fi
+
+bin/create_db magento2
+
+bin/magento setup:install \
+    --db-host=mysql \
+    --db-name=magento2 \
+    --db-user=root \
+    --db-password=toor \
+    --backend-frontname=admin \
+    --base-url=http://$BASEHOST \
+    --language=nl_BE \
+    --currency=EUR \
+    --timezone=Europe/Brussels \
+    --admin-lastname=dockerwest \
+    --admin-firstname=dockerwest \
+    --admin-email=dockerwest@example.com \
+    --admin-user=admin \
+    --admin-password=DockerWest123! \
+    --use-secure=0 \
+    --use-rewrites=1 \
+    --use-secure-admin=0 \
+    --session-save=files \
+    --use-sample-data
+
+

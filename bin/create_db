@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+if which greadlink > /dev/null 2>&1; then
+    alias readlink=greadlink
+fi
+
+currentfolder="$(pwd)"
+
+cd "$(dirname "$(dirname "$(readlink -f "$0")")../")"
+
+# we need some configuration
+if [ -e .env ]; then
+    . "$(pwd)/.env"
+elif [ -e .env-sample ]; then
+    . "$(pwd)/.env-sample"
+else
+    echo "no config found"
+    exit 1
+fi
+
+bin/mysql -e "CREATE DATABASE $1 DEFAULT CHARSET utf8"

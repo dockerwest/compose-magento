@@ -1,0 +1,54 @@
+#!/usr/bin/env sh
+
+if which greadlink > /dev/null 2>&1; then
+    alias readlink=greadlink
+fi
+
+cd "$(dirname "$(readlink -f "$0")")"
+
+# we need some configuration
+if [ -e .env ]; then
+    . "$(pwd)/.env"
+elif [ -e .env-sample ]; then
+    . "$(pwd)/.env-sample"
+else
+    echo "no config found"
+    exit 1
+fi
+
+PATH="$(pwd)/bin:$PATH"
+export PATH
+
+. share/init
+
+cd "$APPLICATION"
+
+sessionname=$(echo "$BASEHOST" | sed 's/[^a-zA-Z]//g');
+
+MANAGER=$1
+if [ -z "$MANAGER" ]; then
+    MANAGER="$WINDOW_MANAGER"
+fi
+
+if [ "$MANAGER" = "screen" ]; then
+    screen -r $sessionname
+    if [ "$?" -ne 0 ]; then
+        screen -S $sessionname
+    fi
+elif [ "$MANAGER" = "tmux" ]; then
+    tmux -L $sessionname has-session -t $sessionname
+    if [ $? -ne 0 ]; then
+        tmux -L $sessionname new -s $sessionname
+    else
+        tmux -L $sessionname a -t $sessionname
+    fi
+elif [ "$MANAGER" = "byobu" ]; then
+    byobu -L $sessionname has-session -t $sessionname
+    if [ $? -ne 0 ]; then
+        byobu -L $sessionname new -s $sessionname
+    else
+        byobu -L $sessionname a -t $sessionname
+    fi
+else
+    echo "run $0 [screen|tmux|byobu]"
+fi

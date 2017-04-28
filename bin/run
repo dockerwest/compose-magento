@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+if which greadlink > /dev/null 2>&1; then
+    alias readlink=greadlink
+fi
+
+cd "$(dirname "$(dirname "$(readlink -f "$0")")../")"
+
+# we need some configuration
+if [ -e .env ]; then
+    . "$(pwd)/.env"
+elif [ -e .env-sample ]; then
+    . "$(pwd)/.env-sample"
+else
+    echo "no config found"
+    exit 1
+fi
+
+. share/init
+
+projectName=$(echo $BASEHOST | sed 's/[^a-zA-Z]//g')
+
+docker-compose -f "$COMPOSE_FILE" -p "$projectName" "$@"
