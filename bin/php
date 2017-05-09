@@ -1,5 +1,12 @@
 #!/usr/bin/env sh
 
+escape_sed() {
+    echo "$*" | sed \
+        -e 's/\//\\\//g' \
+        -e 's/\&/\\\&/g' \
+        -e 's/\ /\\\ /g'
+}
+
 if which greadlink > /dev/null 2>&1; then
     alias readlink=greadlink
 fi
@@ -18,10 +25,17 @@ else
     exit 1
 fi
 
+params=$(
+    while [ ! -z "$1" ]; do
+        echo -n $(escape_sed "$1")" "
+        shift
+    done
+)
+
 # running env?
 running=$(run ps | grep Up | wc -l)
 if [ $running -gt 0 ]; then
-    bin/run exec application gosu www-data sh -c "php $@"
+    bin/run exec application gosu www-data sh -c "php $params"
 else
     . share/init
 
@@ -31,5 +45,5 @@ else
         -e C_UID=$C_UID \
         -e C_GID=$C_GID \
         dockerwest/php-magento2:$PHPVERSION \
-        php "$@"
+        php $params
 fi
