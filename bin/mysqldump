@@ -1,12 +1,5 @@
 #!/usr/bin/env sh
 
-escape_sed() {
-    echo "$*" | sed \
-        -e 's/\//\\\//g' \
-        -e 's/\&/\\\&/g' \
-        -e 's/\ /\\\ /g'
-}
-
 if which greadlink > /dev/null 2>&1; then
     alias readlink=greadlink
 fi
@@ -25,17 +18,10 @@ else
     exit 1
 fi
 
-params=$(
-    while [ ! -z "$1" ]; do
-        echo -n $(escape_sed "$1")" "
-        shift
-    done
-)
-
 # running env?
 running=$(run ps | grep Up | wc -l)
 if [ $running -gt 0 ]; then
-    bin/run exec mysql sh -c "mysqldump -uroot -p$MYSQL_ROOT_PASSWORD $params"
+    bin/run exec mysql sh -c "mysqldump -uroot -p$MYSQL_ROOT_PASSWORD $@"
 else
     echo "mysql requires a running mysql server"
 fi

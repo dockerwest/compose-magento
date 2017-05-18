@@ -1,12 +1,5 @@
 #!/usr/bin/env sh
 
-escape_sed() {
-    echo "$*" | sed \
-        -e 's/\//\\\//g' \
-        -e 's/\&/\\\&/g' \
-        -e 's/\ /\\\ /g'
-}
-
 if which greadlink > /dev/null 2>&1; then
     alias readlink=greadlink
 fi
@@ -25,13 +18,6 @@ else
     exit 1
 fi
 
-params=$(
-    while [ ! -z "$1" ]; do
-        echo -n $(escape_sed "$1")" "
-        shift
-    done
-)
-
 . share/init
 
 docker run -it --rm \
@@ -41,4 +27,4 @@ docker run -it --rm \
     -e C_UID=$C_UID \
     -e C_GID=$C_GID \
     dockerwest/nodejs:7 \
-    npm $params
+    npm "$@"
