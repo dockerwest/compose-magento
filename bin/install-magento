@@ -1,44 +1,45 @@
-#!/usr/bin/env sh
+#!/usr/bin/env python
 
-if which greadlink > /dev/null 2>&1; then
-    alias readlink=greadlink
-fi
+import os, sys, subprocess
+from environment import Environment
 
-currentfolder="$(pwd)"
+currentpath = os.getcwd()
+composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
 
-cd "$(dirname "$(dirname "$(readlink -f "$0")")../")"
+env = Environment(composepath + '/.env')
 
-# we need some configuration
-if [ -e .env ]; then
-    . "$(pwd)/.env"
-elif [ -e .env-sample ]; then
-    . "$(pwd)/.env-sample"
-else
-    echo "no config found"
-    exit 1
-fi
+cmd = [os.path.dirname(sys.argv[0]) + '/create_db', 'magento2']
 
-bin/create_db magento2
+p = subprocess.Popen(cmd)
+try:
+    p.wait()
+except KeyboardInterrupt:
+    try:
+       p.terminate()
+    except OSError:
+       pass
+    p.wait()
 
-bin/magento setup:install \
-    --db-host=mysql \
-    --db-name=magento2 \
-    --db-user=root \
-    --db-password=toor \
-    --backend-frontname=admin \
-    --base-url=http://$BASEHOST \
-    --language=nl_BE \
-    --currency=EUR \
-    --timezone=Europe/Brussels \
-    --admin-lastname=dockerwest \
-    --admin-firstname=dockerwest \
-    --admin-email=dockerwest@example.com \
-    --admin-user=admin \
-    --admin-password=DockerWest123! \
-    --use-secure=0 \
-    --use-rewrites=1 \
-    --use-secure-admin=0 \
-    --session-save=files \
-    --use-sample-data
+cmd = [
+    os.path.dirname(sys.argv[0]) + '/magento', 'setup:install',
+    '--db-host=mysql', '--db-name=magento2', '--db-user=root',
+    '--db-password=' + env.get('MYSQL_ROOT_PASSWORD'),
+    '--backend-frontname=admin',
+    '--base-url=http://' + env.get('BASEHOST'),
+    '--language=nl_BE', '--currency=EUR', '--timezone=Europe/Brussels',
+    '--admin-lastname=dockerwest', '--admin-firstname=dockerwest',
+    '--admin-email=dockerwest@example.com',
+    '--admin-user=admin', '--admin-password=DockerWest123!'
+    '--use-secure=0', '--use-rewrites=1', '--use-secure-admin=0',
+    '--session-save=files', '--use-sample-data'
+]
 
-
+p = subprocess.Popen(cmd)
+try:
+    p.wait()
+except KeyboardInterrupt:
+    try:
+       p.terminate()
+    except OSError:
+       pass
+    p.wait()
