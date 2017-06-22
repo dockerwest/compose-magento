@@ -1,45 +1,32 @@
-#!/usr/bin/env sh
+#!/usr/bin/env python
 
-escape_sed() {
-    echo "$*" | sed \
-        -e 's/\//\\\//g' \
-        -e 's/\&/\\\&/g' \
-        -e 's/\ /\\\ /g'
-}
+import os, sys, subprocess
+from environment import Environment
 
-if which greadlink > /dev/null 2>&1; then
-    alias readlink=greadlink
-fi
+currentpath = os.getcwd()
+composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
 
-currentfolder="$(pwd)"
+env = Environment(composepath + '/.env')
 
-cd "$(dirname "$(dirname "$(readlink -f "$0")")../")"
+cmd = [
+    'docker', 'run', '-it', '--rm',
+    '-v', os.getenv("HOME") + "/.ssh:/var/www/.ssh",
+    '-v', os.getenv("HOME") + "/.composer:/var/www/.composer",
+    '-v', currentpath + ":/phpapp",
+    '-e', "DEVELOPMENT=" + env.get('DEVELOPMENT'),
+    '-e', "C_UID=" + env.get('C_UID'),
+    '-e', "C_GID=" + env.get('C_GID'),
+    'dockerwest/php-magento2:' + env.get('PHPVERSION'),
+    'composer'
+] + sys.argv[1:]
 
-# we need some configuration
-if [ -e .env ]; then
-    . "$(pwd)/.env"
-elif [ -e .env-sample ]; then
-    . "$(pwd)/.env-sample"
-else
-    echo "no config found"
-    exit 1
-fi
+p = subprocess.Popen(cmd)
+try:
+    p.wait()
+except KeyboardInterrupt:
+    try:
+       p.terminate()
+    except OSError:
+       pass
+    p.wait()
 
-params=$(
-    while [ ! -z "$1" ]; do
-        echo -n $(escape_sed "$1")" "
-        shift
-    done
-)
-
-. share/init
-
-docker run -it --rm \
-    -v "$HOME/.ssh":/var/www/.ssh \
-    -v "$HOME/.composer":/var/www/.composer \
-    -v "$currentfolder":/phpapp \
-    -e DEVELOPMENT="$DEVELOPMENT" \
-    -e C_UID=$C_UID \
-    -e C_GID=$C_GID \
-    dockerwest/php-magento2:$PHPVERSION \
-    composer $params

@@ -106,6 +106,11 @@ Available options are: tmux, screen and byobu
 Helpers
 -------
 
+The helpers are written in python, so you should have python2 or python3
+installed on your system to be able to use them. Most Linux distributions and
+macOS have python already installed so there should be no issue there. There
+are no extra dependencies on python modules.
+
 ### composer
 Run the [composer](https://getcomposer.org/) command inside the php docker
 container.  The working directory will be the current directory you are
@@ -216,6 +221,23 @@ If you have dinghy installed this environment will try to use it.
 
 Currently there is an annoying limitation when we are using dinghy and that is
 that the hostnames used must end with `docker`.
+
+#### tmux on macOS
+
+Tmux starts the shells as loginshells, that means that for example bash is
+going to load the `profile` files. This sort of behaviour triggers the
+path_helper that will move our added PATH to the end. This is not the behaviour
+we want.
+
+To fix this you can change the if for the path helper in your `/etc/profile` to
+the following:
+
+~~~ sh
+if [ -z $TMUX ] && [ -x /usr/libexec/path_helper ]; then
+	eval `/usr/libexec/path_helper -s`
+fi
+~~~
+
 
 ### oh-my-zsh users
 
