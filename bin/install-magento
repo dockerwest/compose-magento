@@ -21,7 +21,7 @@ except KeyboardInterrupt:
     p.wait()
 
 cmd = [
-    os.path.dirname(sys.argv[0]) + '/magento', 'setup:install',
+    os.path.dirname(sys.argv[0]) + '/magento', 'setup:install', '-vvv',
     '--db-host=mysql', '--db-name=magento2', '--db-user=root',
     '--db-password=' + env.get('MYSQL_ROOT_PASSWORD'),
     '--backend-frontname=admin',
