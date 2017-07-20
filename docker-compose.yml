@@ -34,7 +34,7 @@ services:
   nginx:
     image: dockerwest/nginx-magento2:${NGINXVERSION:-stable}
     environment:
-      - VIRTUAL_HOST=${BASEHOST:-magento2.dev},www.${BASEHOST:-magento2.dev}
+      - VIRTUAL_HOST=${BASEHOST:-magento2.dev},www.${BASEHOST:-magento2.dev},${EXTRAHOSTS}
     volumes:
       - ${APPLICATION:-../magento2}:/phpapp
     links:
