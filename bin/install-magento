@@ -29,7 +29,7 @@ cmd = [
     '--language=nl_BE', '--currency=EUR', '--timezone=Europe/Brussels',
     '--admin-lastname=dockerwest', '--admin-firstname=dockerwest',
     '--admin-email=dockerwest@example.com',
-    '--admin-user=admin', '--admin-password=DockerWest123!'
+    '--admin-user=admin', '--admin-password=DockerWest123!',
     '--use-secure=0', '--use-rewrites=1', '--use-secure-admin=0',
     '--session-save=files', '--use-sample-data'
 ]
