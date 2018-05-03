@@ -4,19 +4,19 @@ services:
   redis:
     image: redis:alpine
     environment:
-      - DOMAIN_NAME=redis.${BASEHOST:-magento2.test}
+      - DOMAIN_NAME=redis.${BASEHOST:-magento2.docker}
 
   mysql:
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-toor}
-      - DOMAIN_NAME=mysql.${BASEHOST:-magento2.test}
+      - DOMAIN_NAME=mysql.${BASEHOST:-magento2.docker}
     command: --innodb-doublewrite=0
 
   mailcatcher:
     image: schickling/mailcatcher
     environment:
-      - DOMAIN_NAME=mailcatcher.${BASEHOST:-magento2.test}
+      - DOMAIN_NAME=mailcatcher.${BASEHOST:-magento2.docker}
 
   application:
     image: dockerwest/php-magento2:${PHPVERSION:-7.0}
@@ -34,7 +34,7 @@ services:
   nginx:
     image: dockerwest/nginx-magento2:${NGINXVERSION:-stable}
     environment:
-      - VIRTUAL_HOST=${BASEHOST:-magento2.test},${EXTRAHOSTS}
+      - VIRTUAL_HOST=${BASEHOST:-magento2.docker},${EXTRAHOSTS}
     volumes:
       - ${APPLICATION:-../magento2}:/phpapp
     links:
