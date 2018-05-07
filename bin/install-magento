@@ -10,6 +10,10 @@ composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
 
 env = Environment(composepath + '/.env')
 
+if '2' != env.get('MAGENTOVERSION'):
+    print('install-magento command is only usable for Magento 2')
+    exit()
+
 cmd = [os.path.dirname(sys.argv[0]) + '/create_db', 'magento2']
 
 p = subprocess.Popen(cmd)
