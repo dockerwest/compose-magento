@@ -1,12 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import os, sys, subprocess
+import os
+import sys
+import subprocess
 from environment import Environment
 
 currentpath = os.getcwd()
 composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
 
 env = Environment(composepath + '/.env')
+
+if '2' != env.get('MAGENTOVERSION'):
+    print('install-magento command is only usable for Magento 2')
+    exit()
 
 cmd = [os.path.dirname(sys.argv[0]) + '/create_db', 'magento2']
 
@@ -15,9 +21,9 @@ try:
     p.wait()
 except KeyboardInterrupt:
     try:
-       p.terminate()
+        p.terminate()
     except OSError:
-       pass
+        pass
     p.wait()
 
 cmd = [
@@ -34,15 +40,4 @@ cmd = [
     '--session-save=files', '--use-sample-data'
 ]
 
-p = subprocess.Popen(cmd)
-try:
-    p.wait()
-except KeyboardInterrupt:
-    try:
-       p.terminate()
-    except OSError:
-       pass
-    p.wait()
-
-p.communicate()
-sys.exit(p.returncode)
+os.execvp(cmd[0], cmd)

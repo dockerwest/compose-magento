@@ -3,8 +3,12 @@ Read .env file, basically taken from docker-compose for simplicity and modified
 for our usecase
 """
 
-import os, contextlib, codecs, re
-from distutils.spawn import find_executable
+import os
+import contextlib
+import codecs
+import re
+import shutil
+
 
 def split_env(env):
     if '=' in env:
@@ -30,6 +34,7 @@ def env_vars_from_file(filename):
                 env[k] = v
     return env
 
+
 class Environment:
 
     required_keys = [
@@ -46,13 +51,13 @@ class Environment:
                 raise ValueError("Env does not contain %s" % requiredkey)
 
     def get_compose_filename(self):
-        dingyexec = find_executable('dinghy')
+        dingyexec = shutil.which('dinghy')
         if None is not dingyexec:
             return 'docker-compose-dinghy.yml'
         return 'docker-compose.yml'
 
     def get_project_name(self):
-        regex = re.compile('\W+');
+        regex = re.compile('\\W+')
         basehost = self.get('BASEHOST')
         projectname = regex.sub('', basehost)
         return projectname
@@ -61,4 +66,3 @@ class Environment:
         if key not in self.environment:
             return None
         return self.environment[key]
-

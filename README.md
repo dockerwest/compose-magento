@@ -1,4 +1,4 @@
-Magento2 basic developer environment
+Magento basic developer environment
 ====================================
 
 Basic developer environment for Magento2 apps.
@@ -53,10 +53,11 @@ C_UID=1000
 C_GID=1000
 PHPVERSION=7.1
 NGINXVERSION=stable
+MAGENTOVERSION=2
 BASEHOST=magento2.dev
 MYSQL_ROOT_PASSWORD=toor
 APPLICATION=../magento2
-DEVELOPMENT=noprofile
+DEVELOPMENT=1
 WINDOW_MANAGER=tmux
 ~~~
 
@@ -76,6 +77,11 @@ Choose your PHP version. To see which versions are available
 Choose what version of Nginx you want. To see which versions are available see
 [here](https://github.com/dockerwest/nginx-magento2)
 
+### MAGENTOVERSION
+
+Choose the version of magento you are going to use. The nginx configuration is
+slightly different between version 1 and version 2.
+
 ### BASEHOST
 
 This setting defines what the hostname will be you can browse your magento2 app.
@@ -92,12 +98,13 @@ A relative or absolute path to your magento2 code. this can be a checkout of
 
 ### DEVELOPMENT
 
-Set the development flag. Default we use noprofile which will allow us to use
-xdebug. When `DEVELOPMENT=1` you also have tideways enabled which gives you
-profiling output of you application.
+There is the `DEVELOPMENT` environment variable wich will enable xdebug,
+composer and enable timestamp checking in opcache. 
 
-To visualize your profiling output see
-[docker-compose-xhgui](https://github.com/dockerwest/compose-xhgui)
+When `DEVELOPMENT` is enabled xdebug should work out of the box. When you have
+issues - like while running docker for mac - you can set the extra environment
+variable `XDEBUG_CONFIG` with your hosts ip in it so xdebug can properly
+connect back.
 
 ### WINDOW_MANAGER
 Set the default window manager when running the environment.
