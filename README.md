@@ -1,4 +1,4 @@
-Magento2 basic developer environment
+Magento basic developer environment
 ====================================
 
 Basic developer environment for Magento2 apps.
@@ -53,6 +53,7 @@ C_UID=1000
 C_GID=1000
 PHPVERSION=7.1
 NGINXVERSION=stable
+MAGENTOVERSION=2
 BASEHOST=magento2.dev
 MYSQL_ROOT_PASSWORD=toor
 APPLICATION=../magento2
@@ -75,6 +76,11 @@ Choose your PHP version. To see which versions are available
 
 Choose what version of Nginx you want. To see which versions are available see
 [here](https://github.com/dockerwest/nginx-magento2)
+
+### MAGENTOVERSION
+
+Choose the version of magento you are going to use. The nginx configuration is
+slightly different between version 1 and version 2.
 
 ### BASEHOST
 
