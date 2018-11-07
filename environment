@@ -48,7 +48,7 @@ fi
 
 cd "$APPLICATION"
 
-sessionname=$(echo "$BASEHOST" | sed 's/[^a-zA-Z]//g');
+sessionname=$(echo "$BASEHOST" | sed 's/[^a-zA-Z0-9]//g');
 
 MANAGER=$1
 if [ -z "$MANAGER" ]; then
