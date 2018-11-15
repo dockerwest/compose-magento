@@ -14,7 +14,7 @@ services:
     command: --innodb-doublewrite=0
 
   mailcatcher:
-    image: schickling/mailcatcher
+    image: mailhog/mailhog
     environment:
       - DOMAIN_NAME=mailcatcher.${BASEHOST:-magento.docker}
 
