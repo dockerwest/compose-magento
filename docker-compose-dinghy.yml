@@ -34,6 +34,7 @@ services:
       - mysql
       - redis
       - mailcatcher
+      - elastic
     network_mode: bridge
 
   nginx:
@@ -47,3 +48,17 @@ services:
       - application
     network_mode: bridge
 
+  elastic:
+    image: blacktop/elasticsearch:5
+    environment:
+      - DOMAIN_NAME=elastic.${BASEHOST:-magento.docker}
+    network_mode: bridge
+
+  elastic-hq:
+    image: elastichq/elasticsearch-hq
+    environment:
+      - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
+      - VIRTUAL_PORT=5001
+    links:
+      - elastic
+    network_mode: bridge

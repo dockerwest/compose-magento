@@ -16,7 +16,7 @@ services:
   mailcatcher:
     image: mailhog/mailhog
     environment:
-      - DOMAIN_NAME=mailcatcher.${BASEHOST:-magento.docker}
+      - VIRTUAL_HOST=mailcatcher.${BASEHOST:-magento.docker}
 
   application:
     image: dockerwest/php-magento${MAGENTOVERSION}:${PHPVERSION:-7.0}
@@ -26,10 +26,6 @@ services:
       - DEVELOPMENT=${DEVELOPMENT:-1}
     volumes:
       - ${APPLICATION:-../magento}:/phpapp
-    links:
-      - mysql
-      - redis
-      - mailcatcher
 
   nginx:
     image: dockerwest/nginx-magento${MAGENTOVERSION}:${NGINXVERSION:-stable}
@@ -37,6 +33,14 @@ services:
       - VIRTUAL_HOST=${BASEHOST:-magento.docker},${EXTRAHOSTS}
     volumes:
       - ${APPLICATION:-../magento}:/phpapp
-    links:
-      - application
+
+  elastic:
+    image: blacktop/elasticsearch:5
+    environment:
+      - DOMAIN_NAME=elastic.${BASEHOST:-magento.docker}
+
+  elastic-hq:
+    image: elastichq/elasticsearch-hq
+    environment:
+      - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
 
