@@ -37,7 +37,13 @@ cmd = [
     '--admin-email=dockerwest@example.com',
     '--admin-user=admin', '--admin-password=DockerWest123!',
     '--use-secure=0', '--use-rewrites=1', '--use-secure-admin=0',
-    '--session-save=files', '--use-sample-data'
+    '--use-sample-data',
+    '--session-save=redis', '--session-save-redis-host=redis',
+    '--session-save-redis-db=0',
+    '--cache-backend=redis', '--cache-backend-redis-server=redis',
+    '--cache-backend-redis-db=1',
+    '--page-cache=redis', '--page-cache-redis-server=redis',
+    '--page-cache-redis-db=2', '--page-cache-redis-compress-data=1'
 ]
 
 os.execvp(cmd[0], cmd)
