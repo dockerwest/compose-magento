@@ -2,6 +2,8 @@
 
 import os
 import sys
+import subprocess
+import re
 from environment import Environment
 
 currentpath = os.getcwd()
@@ -14,8 +16,59 @@ if '2' != env.get('MAGENTOVERSION'):
     exit()
 
 cmd = [
-    os.path.dirname(sys.argv[0]) + '/php',
-    'bin/magento'
+    os.path.dirname(sys.argv[0]) + '/run',
+    'ps', 'application'
+]
+
+p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+try:
+    p.wait()
+except KeyboardInterrupt:
+    try:
+        p.terminate()
+    except OSError:
+        pass
+    p.wait()
+out, err = p.communicate()
+out = out.decode('utf-8')
+
+dockerrun = ['docker', 'run', '--rm']
+if sys.stdin.isatty() and sys.stdout.isatty():
+    dockerrun += ['-it']
+
+cmd = dockerrun
+
+if re.search('Up', out):
+    containercmd = [
+        os.path.dirname(sys.argv[0]) + '/run',
+        'ps', '-q', 'application'
+    ]
+
+    p = subprocess.Popen(containercmd, stdout=subprocess.PIPE)
+    try:
+        p.wait()
+    except KeyboardInterrupt:
+        try:
+            p.terminate()
+        except OSError:
+            pass
+        p.wait()
+    out, err = p.communicate()
+    applicationcontainer = out.decode('utf-8').strip()
+    cmd += [
+        '--pid=container:' + applicationcontainer,
+        '--net=container:' + applicationcontainer
+    ]
+
+cmd += [
+    '-v', os.getenv("HOME") + "/.ssh:/var/www/.ssh",
+    '-v', os.getenv("HOME") + "/.composer:/var/www/.composer",
+    '-v', currentpath + ":/phpapp",
+    '-e', "DEVELOPMENT=" + env.get('DEVELOPMENT'),
+    '-e', "C_UID=" + env.get('C_UID'),
+    '-e', "C_GID=" + env.get('C_GID'),
+    'dockerwest/php-magento2:' + env.get('PHPVERSION'),
+    'php', 'bin/magento'
 ] + sys.argv[1:]
 
 os.execvp(cmd[0], cmd)
