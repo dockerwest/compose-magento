@@ -202,6 +202,12 @@ BASEHOST variable from the .env file
 
 eg. `$ run up`
 
+### install-magento
+
+This will run an installation using redis for caches and create a default admin
+user. The admin user is `admin` and the password is `DockerWest123!`. The admin
+endpoint will be found under `/admin`.
+
 Tricks
 ------
 
