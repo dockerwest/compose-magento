@@ -8,6 +8,7 @@ import contextlib
 import codecs
 import re
 import shutil
+import platform
 
 
 def split_env(env):
@@ -54,6 +55,9 @@ class Environment:
         dingyexec = shutil.which('dinghy')
         if None is not dingyexec:
             return 'docker-compose-dinghy.yml'
+        if 'Darwin' == platform.system():
+            return 'docker-compose-mac.yml'
+
         return 'docker-compose.yml'
 
     def get_project_name(self):
