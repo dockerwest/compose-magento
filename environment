@@ -44,6 +44,12 @@ if which dinghy > /dev/null 2>&1; then
         dinghy up
     fi
     eval $(dinghy env)
+elif ! docker info > /dev/null 2>&1; then
+    if [ "$uname" = "Darwin" ]; then
+        open -a Docker
+    elif [ "$uname" = "Linux" ]; then
+        sudo systemctl restart docker.service
+    fi
 fi
 
 cd "$APPLICATION"
