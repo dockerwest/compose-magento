@@ -4,7 +4,10 @@ import os
 import sys
 import subprocess
 import re
+import platform
 from environment import Environment
+
+applicationcontainer = None
 
 currentpath = os.getcwd()
 composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
@@ -77,4 +80,30 @@ cmd += [
     'composer'
 ] + sys.argv[1:]
 
-os.execvp(cmd[0], cmd)
+if 'Darwin' == platform.system() and None is not applicationcontainer:
+    p = subprocess.Popen(cmd)
+    try:
+        p.wait()
+    except KeyboardInterrupt:
+        try:
+            p.terminate()
+        except OSError:
+            pass
+        p.wait()
+
+    os.chdir(currentpath + '/vendor')
+    cpcmd = [
+        'docker', 'cp', './', applicationcontainer + ':/phpapp/vendor'
+    ]
+
+    p = subprocess.Popen(cmd)
+    try:
+        p.wait()
+    except KeyboardInterrupt:
+        try:
+            p.terminate()
+        except OSError:
+            pass
+        p.wait()
+else:
+    os.execvp(cmd[0], cmd)
