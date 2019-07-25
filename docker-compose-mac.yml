@@ -25,7 +25,7 @@ services:
       - C_GID=${G_UID:-1000}
       - DEVELOPMENT=${DEVELOPMENT:-1}
     volumes:
-      - ${APPLICATION:-../magento}:/phpapp
+      - ${APPLICATION:-../magento}:/phpapp:cached
       - generated:/phpapp/generated
       - var:/phpapp/var
       - vendor:/phpapp/vendor
@@ -36,7 +36,7 @@ services:
     environment:
       - VIRTUAL_HOST=${BASEHOST:-magento.docker},${EXTRAHOSTS}
     volumes:
-      - ${APPLICATION:-../magento}:/phpapp
+      - ${APPLICATION:-../magento}:/phpapp:cached
       - generated:/phpapp/generated
       - var:/phpapp/var
       - vendor:/phpapp/vendor
