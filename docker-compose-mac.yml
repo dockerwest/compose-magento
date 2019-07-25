@@ -26,6 +26,10 @@ services:
       - DEVELOPMENT=${DEVELOPMENT:-1}
     volumes:
       - ${APPLICATION:-../magento}:/phpapp
+      - generated:/phpapp/generated
+      - var:/phpapp/var
+      - vendor:/phpapp/vendor
+      - pub-static:/phpapp/pub/static
 
   nginx:
     image: dockerwest/nginx-magento${MAGENTOVERSION}:${NGINXVERSION:-stable}
@@ -33,6 +37,10 @@ services:
       - VIRTUAL_HOST=${BASEHOST:-magento.docker},${EXTRAHOSTS}
     volumes:
       - ${APPLICATION:-../magento}:/phpapp
+      - generated:/phpapp/generated
+      - var:/phpapp/var
+      - vendor:/phpapp/vendor
+      - pub-static:/phpapp/pub/static
 
   elastic:
     image: blacktop/elasticsearch:5
@@ -44,3 +52,8 @@ services:
     environment:
       - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
 
+volumes:
+    generated:
+    var:
+    vendor:
+    pub-static:
