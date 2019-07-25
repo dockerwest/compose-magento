@@ -96,6 +96,7 @@ if 'Darwin' == platform.system() and None is not applicationcontainer:
         'docker', 'cp', './', applicationcontainer + ':/phpapp/vendor'
     ]
 
+    print('--> copy vendor to application vendor volume')
     p = subprocess.Popen(cmd)
     try:
         p.wait()
