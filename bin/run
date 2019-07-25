@@ -10,9 +10,12 @@ os.chdir(composepath)
 
 env = Environment(composepath + '/.env')
 
+environ = {
+    'COMPOSE_PROJECT_NAME': env.get_project_name(),
+}
+
 cmd = [
-    'docker-compose', '-f', env.get_compose_filename(),
-    '-p', env.get_project_name()
+    'docker-compose', '-f', env.get_compose_filename()
 ] + sys.argv[1:]
 
-os.execvp(cmd[0], cmd)
+os.execvpe(cmd[0], cmd, environ)

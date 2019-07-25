@@ -52,6 +52,14 @@ services:
     environment:
       - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
 
+  permissions-helper:
+    image: docker
+    command: "sh -c \"while true; do docker exec ${COMPOSE_PROJECT_NAME}_application_1 chown -R www-data: /phpapp/generated /phpapp/var /phpapp/vendor /phpapp/pub/static; sleep 10; done\""
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 volumes:
     generated:
     var:
