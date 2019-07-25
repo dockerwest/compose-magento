@@ -10,9 +10,8 @@ os.chdir(composepath)
 
 env = Environment(composepath + '/.env')
 
-environ = {
-    'COMPOSE_PROJECT_NAME': env.get_project_name(),
-}
+environ = os.environ
+environ['COMPOSE_PROJECT_NAME'] = env.get_project_name()
 
 cmd = [
     'docker-compose', '-f', env.get_compose_filename()
