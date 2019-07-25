@@ -17,6 +17,9 @@ services:
     image: mailhog/mailhog
     environment:
       - VIRTUAL_HOST=mailcatcher.${BASEHOST:-magento.docker}
+    networks:
+      - default
+      - proxy_proxy
 
   application:
     image: dockerwest/php-magento${MAGENTOVERSION}:${PHPVERSION:-7.0}
@@ -41,6 +44,9 @@ services:
       - var:/phpapp/var
       - vendor:/phpapp/vendor
       - pub-static:/phpapp/pub/static
+    networks:
+      - default
+      - proxy_proxy
 
   elastic:
     image: blacktop/elasticsearch:5
@@ -51,6 +57,9 @@ services:
     image: elastichq/elasticsearch-hq
     environment:
       - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
+    networks:
+      - default
+      - proxy_proxy
 
   permissions-helper:
     image: docker
@@ -61,7 +70,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
-    generated:
-    var:
-    vendor:
-    pub-static:
+  generated:
+  var:
+  vendor:
+  pub-static:
+
+networks:
+  proxy_proxy:
+    external: true
+
