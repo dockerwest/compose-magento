@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import subprocess
+from environment import Environment
+from mutagen import Mutagen
+from application import Application
+
+currentpath = os.getcwd()
+composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
+
+env = Environment(composepath + '/.env')
+mutagen = Mutagen(env)
+
+if len(sys.argv) < 2 or sys.argv[1] == "help":
+    print("""\
+Assists in starting and pausing Mutagen synchronisation to the Docker application container,
+without the need to juggle around container and Mutagen session names.
+
+Usage:
+    mutangen-helper [command]
+
+Supported commands:
+    help        This help regarding the script.
+    up          Creates or resumes already created Mutagen session.
+    pause       Pauses the Mutagen session.
+    destroy     Completely removes the Mutagen session. 
+                Note: this will NOT delete files, neither in host nor in guest container.
+    monitor     Opens up the monitor view of the generated Mutagen session.
+""")
+    sys.exit()
+
+def up():
+    return mutagen.session_init(mutagen.get_session_name(), env.get('APPLICATION'), env.get_container_name(Application.CONTAINER_SERVICE_NAME))
+
+def pause():
+    return mutagen.session_pause(mutagen.get_session_name())
+
+def destroy():
+    return mutagen.session_terminate(mutagen.get_session_name())
+
+def monitor():
+    mutagen.session_monitor(mutagen.get_session_name())
+
+def exec_arg(arg):
+    arg_map = {
+        'up': up,
+        'pause': pause,
+        'destroy': destroy,
+        'monitor': monitor
+    }
+
+    argFunc = arg_map.get(arg, lambda: 'Invalid argument')
+    return argFunc()
+        
+exec_result = exec_arg(sys.argv[1])
+print(exec_result.strip())
