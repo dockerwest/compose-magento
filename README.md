@@ -106,6 +106,15 @@ issues - like while running docker for mac - you can set the extra environment
 variable `XDEBUG_CONFIG` with your hosts ip in it so xdebug can properly
 connect back.
 
+### APPLICATION_FILE_SYNC
+
+Defines which method is to be used to sync files to the application container.
+
+Supported values:
+  * none (default): disables integrated scripts, allowing your own method 
+   (or mount) to be set up over the `docker-compose.yml`
+  * mutagen: highly recommended on Mac and Windows. See [https://mutagen.io/](https://mutagen.io/). Will also result in docker-compose-mutagen.yml being used upon compose.
+
 ### WINDOW_MANAGER
 Set the default window manager when running the environment.
 Available options are: tmux, screen and byobu
