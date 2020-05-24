@@ -3,12 +3,17 @@
 import os
 import sys
 from environment import Environment
+from application import Application
 
 currentpath = os.getcwd()
 composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
 os.chdir(composepath)
 
 env = Environment(composepath + '/.env')
+
+if 'up' in sys.argv:
+    application = Application(env)
+    application.start_file_sync_daemon()
 
 cmd = [
     'docker-compose', '-f', env.get_compose_filename(),
