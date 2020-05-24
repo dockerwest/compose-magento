@@ -254,17 +254,17 @@ $ brew install coreutils
 
 On macOS you could just install docker from the docker site and run like this.
 But our experience is that the native docker install is fairly slow to use. We
-would suggest you to install [dinghy](https://github.com/codekitchen/dinghy).
+would suggest you to install [Mutagen](https://mutagen.io/).
 
-[install dinghy](https://github.com/codekitchen/dinghy#install) and install the
-VM technology you want to use. If you want native xhyve support you can
-additionally install 
-[xhyve driver for docker machine](https://github.com/zchee/docker-machine-driver-xhyve).
+Mutagen is available over [Homebrew](https://brew.sh/):
+~~~ sh
+$ brew install mutagen-io/mutagen/mutagen
+~~~
 
-If you have dinghy installed this environment will try to use it.
-
-Currently there is an annoying limitation when we are using dinghy and that is
-that the hostnames used must end with `docker`.
+After [installing mutagen](https://mutagen.io/documentation/introduction/installation),
+update the `.env` config flag `APPLICATION_FILE_SYNC` to contain value `mutagen`.
+Calling `run up` from inside the `./environment` will spin up the Mutagen session
+automatically.
 
 #### tmux on macOS
 
