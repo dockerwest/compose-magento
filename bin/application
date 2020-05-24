@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import time
+from environment import Environment
+from application import Application
+
+currentpath = os.getcwd()
+composepath = os.path.abspath(os.path.dirname(sys.argv[0]) + '/../')
+
+env = Environment(composepath + '/.env')
+application = Application(env)
+
+def file_sync(args):    
+    daemon = False
+    force = False
+    action_arg = args[0]
+    
+    if action_arg == 'daemon':
+        daemon = True
+        action_arg = args[1]
+
+    for arg in args:
+        if arg == 'force':
+            force = True
+            break
+
+    arg_map = {
+        'up-down': application.up_down_file_sync,
+        'up': application.up_file_sync,
+        'down': application.down_file_sync
+    }
+
+    arg_func = arg_map.get(action_arg, None)
+
+    if arg_func is None:
+        raise SystemExit(f'Invalid argument - "{action_arg}"" does not map to a valid action.')
+
+    return arg_func(force, daemon)
+
+if len(sys.argv) < 2 or sys.argv[1] == "help":
+    print("""\
+Provides application container management.
+
+Usage:
+    application [command]
+
+Supported commands:
+    file-sync   Manage file synchronisation state of the container. 
+                Requires additional commands.
+
+Use application [command] help for more info regarding a command.
+""")
+    sys.exit()
+
+if sys.argv[1] == 'file-sync':
+    if len(sys.argv) < 3 or sys.argv[2] == "help":
+        print("""\
+Manage file synchronisation state of the container. Requires additional commands.
+
+Usage:
+    application file-sync [command]
+
+Supported commands:   
+    daemon      When prefixing a command with "daemon", the command will be daemonized. 
+                Assuring desired state of application container is awaited.
+                Usage: application file-sync daemon up-down
+
+    up          Creates and/or resumes the file sync.
+    down        Halts sync.
+    up-down     Starts and halts sync. Useful for automated halting of sync upon
+                application container shutdown, when combined with daemon command.
+
+    force       Forces desired action, ignoring application container state.
+""")
+        sys.exit()
+
+    file_sync_result = file_sync(sys.argv[2:])
+
+    # TODO: must revise, types gone wrong
+    if file_sync_result is not None:
+        print(file_sync_result.strip())
