@@ -113,7 +113,9 @@ Defines which method is to be used to sync files to the application container.
 Supported values:
   * none (default): disables integrated scripts, allowing your own method 
    (or mount) to be set up over the `docker-compose.yml`
-  * mutagen: highly recommended on Mac and Windows. See [https://mutagen.io/](https://mutagen.io/). Will also result in docker-compose-mutagen.yml being used upon compose.
+  * mutagen: highly recommended on Mac and Windows. See 
+  [https://mutagen.io/](https://mutagen.io/). Will also result in 
+  docker-compose-mutagen.yml being used upon compose.
 
 ### WINDOW_MANAGER
 Set the default window manager when running the environment.
@@ -216,6 +218,26 @@ eg. `$ run up`
 This will run an installation using redis for caches and create a default admin
 user. The admin user is `admin` and the password is `DockerWest123!`. The admin
 endpoint will be found under `/admin`.
+
+### application
+
+Entry-point for operations specific to the application (php) docker container.
+Used by the `run up` command too, to facilitate file sync instances (if enabled).
+See the `help` for more information:
+
+~~~ sh
+$ application help
+~~~
+
+### mutagen-helper
+
+Assists in starting and pausing Mutagen synchronisation to the Docker application container,
+without the need to juggle around container and Mutagen session names.
+See the `help` for more information:
+
+~~~ sh
+$ mutagen-helper help
+~~~
 
 Tricks
 ------
