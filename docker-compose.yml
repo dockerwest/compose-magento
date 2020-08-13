@@ -22,7 +22,7 @@ services:
     image: dockerwest/php-magento${MAGENTOVERSION}:${PHPVERSION:-7.0}
     environment:
       - C_UID=${C_UID:-1000}
-      - C_GID=${G_UID:-1000}
+      - C_GID=${C_GID:-1000}
       - DEVELOPMENT=${DEVELOPMENT:-1}
     volumes:
       - ${APPLICATION:-../magento}:/phpapp
