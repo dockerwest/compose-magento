@@ -2,13 +2,13 @@ version: '3'
 
 services:
   redis:
-    image: redis:alpine
+    image: docker.io/library/redis:alpine
     environment:
       - DOMAIN_NAME=redis.${BASEHOST:-magento.docker}
     network_mode: bridge
 
   mysql:
-    image: mysql:5.7
+    image: docker.io/library/mysql:${MYSQLVERSION:-8}
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-toor}
       - DOMAIN_NAME=mysql.${BASEHOST:-magento.docker}
@@ -16,14 +16,14 @@ services:
     network_mode: bridge
 
   mailcatcher:
-    image: mailhog/mailhog
+    image: docker.io/mailhog/mailhog:latest
     environment:
       - VIRTUAL_HOST=mailcatcher.${BASEHOST:-magento.docker}
       - VIRTUAL_PORT=8025
     network_mode: bridge
 
   application:
-    image: dockerwest/php-magento${MAGENTOVERSION}:${PHPVERSION:-7.0}
+    image: docker.io/dockerwest/php-magento${MAGENTOVERSION}:${PHPVERSION:-7.3}
     environment:
       - C_UID=${C_UID:-1000}
       - C_GID=${C_GID:-1000}
@@ -38,7 +38,7 @@ services:
     network_mode: bridge
 
   nginx:
-    image: dockerwest/nginx-magento${MAGENTOVERSION}:${NGINXVERSION:-stable}
+    image: docker.io/dockerwest/nginx-magento${MAGENTOVERSION}:${NGINXVERSION:-stable}
     environment:
       - VIRTUAL_HOST=${BASEHOST:-magento.docker},${EXTRAHOSTS}
       - VIRTUAL_PORT=80
@@ -49,13 +49,13 @@ services:
     network_mode: bridge
 
   elastic:
-    image: blacktop/elasticsearch:5
+    image: docker.io/blacktop/elasticsearch:${ELASTICSEARCHVERSION:-7}
     environment:
       - DOMAIN_NAME=elastic.${BASEHOST:-magento.docker}
     network_mode: bridge
 
   elastic-hq:
-    image: elastichq/elasticsearch-hq
+    image: docker.io/elastichq/elasticsearch-hq
     environment:
       - VIRTUAL_HOST=hq.${BASEHOST:-magento.docker}
       - VIRTUAL_PORT=5001

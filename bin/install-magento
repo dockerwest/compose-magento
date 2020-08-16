@@ -43,7 +43,9 @@ cmd = [
     '--cache-backend=redis', '--cache-backend-redis-server=redis',
     '--cache-backend-redis-db=1',
     '--page-cache=redis', '--page-cache-redis-server=redis',
-    '--page-cache-redis-db=2', '--page-cache-redis-compress-data=1'
+    '--page-cache-redis-db=2', '--page-cache-redis-compress-data=1',
+    '--search-engine=elasticsearch' + env.get('ELASTICSEARCHVERSION'),
+    '--elasticsearch-host=elastic'
 ]
 
 os.execvp(cmd[0], cmd)
